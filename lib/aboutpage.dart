@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-void main() => runApp(HabitSyncApp());
+void main() => runApp(Habitude());
 
-class HabitSyncApp extends StatelessWidget {
+class Habitude extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -27,8 +27,9 @@ Habitude is a simple and intuitive habit tracker app designed to help users buil
 ''';
 
   final String credits = '''
-Developed by Niyaz, Milana, and Yelzhan in the scope of the course “Crossplatform Development” at Astana IT University.
-Mentor: Assistant Professor Abzal Kyzyrkanov
+Developed by Niyaz, Milana, and Yelzhan
+Course “Crossplatform Development” at Astana IT University.
+Professor - Abzal Kyzyrkanov
 ''';
 
   @override
