@@ -1,93 +1,183 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const AssignmentFirstApp());
+  runApp(ChangeNotifierProvider(
+    create: (_) => ThemeNotifier(),
+    child: const HabitudeApp(),
+  ));
 }
 
-class AssignmentFirstApp extends StatelessWidget {
-  const AssignmentFirstApp({super.key});
+class HabitudeApp extends StatelessWidget {
+  const HabitudeApp({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final themeNotifier = Provider.of<ThemeNotifier>(context);
     return MaterialApp(
-      title: '1st assignment',
-      theme: ThemeData(
-        
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.cyan),
-      ),
-      home: const MyHomePage(title: 'First Assignment'),
+      title: 'Habitude',
+      theme: themeNotifier.currentTheme,
+      debugShowCheckedModeBanner: false,
+      home: const HabitHomePage(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+// Theme Management
+enum AppTheme { Light, Dark, Custom }
 
-  final String title;
+class ThemeNotifier extends ChangeNotifier {
+  ThemeData _currentTheme = ThemeData.light();
+  AppTheme _currentAppTheme = AppTheme.Light;
 
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  ThemeData get currentTheme => _currentTheme;
+  AppTheme get currentAppTheme => _currentAppTheme;
+
+  void setTheme(AppTheme theme) {
+    switch (theme) {
+      case AppTheme.Light:
+        _currentTheme = ThemeData.light();
+        break;
+      case AppTheme.Dark:
+        _currentTheme = ThemeData.dark();
+        break;
+      case AppTheme.Custom:
+        _currentTheme = ThemeData(
+          brightness: Brightness.light,
+          primarySwatch: Colors.teal,
+          scaffoldBackgroundColor: const Color(0xFFEFEFEF),
+        );
+        break;
+    }
+    _currentAppTheme = theme;
+    notifyListeners();
+  }
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  bool _showText = false;
-  TextStyle currentStyle = TextStyle(fontSize: 20, color: Colors.black);
-  List<Color> colors = [Colors.red, Colors.blue, Colors.green, Colors.orange];
-  int currentColorIndex = 0;
+// Home Page
+class HabitHomePage extends StatefulWidget {
+  const HabitHomePage({super.key});
+
+  @override
+  State<HabitHomePage> createState() => _HabitHomePageState();
+}
+
+class _HabitHomePageState extends State<HabitHomePage> {
+  final List<String> habits = [];
+  final List<bool> isChecked = [];
+  final TextEditingController habitController = TextEditingController();
+
+  void _addHabit() {
+    final habit = habitController.text.trim();
+    if (habit.isNotEmpty) {
+      setState(() {
+        habits.add(habit);
+        isChecked.add(false);
+        habitController.clear();
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-  
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-
-        title: Text(widget.title),
+        title: const Text('Habitude'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const SettingsPage()),
+            ),
+          ),
+        ],
       ),
-      body: Center(
-
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('Click on of these buttons:'),
-            ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  _showText = true;
-                  currentStyle = TextStyle(fontSize: 20, color: Colors.black);
-                });
-              },
-              child: const Text('Show Text'),
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: habitController,
+                    decoration: const InputDecoration(labelText: 'New Habit'),
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.add),
+                  onPressed: _addHabit,
+                ),
+              ],
             ),
-            ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  _showText = false;
-                  currentStyle = TextStyle(fontSize: 20, color: Colors.black);
-                });
-              },
-              child: const Text('Hide Text'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  currentColorIndex = (currentColorIndex + 1) % colors.length;
-                  currentStyle = TextStyle(
-                    fontSize: 20,
-                    color: colors[currentColorIndex],
-                  );  
-                });
-              },
-              child: const Text('Change Color'),
-            ),
-            if (_showText)
-              Text(
-                'Hello World!',
-                style: currentStyle,
+            const SizedBox(height: 20),
+            Expanded(
+              child: ListView.builder(
+                itemCount: habits.length,
+                itemBuilder: (context, index) {
+                  return CheckboxListTile(
+                    title: Text(habits[index]),
+                    value: isChecked[index],
+                    onChanged: (bool? value) {
+                      setState(() {
+                        isChecked[index] = value ?? false;
+                      });
+                    },
+                  );
+                },
               ),
-            
+            )
           ],
         ),
+      ),
+    );
+  }
+}
+
+// Settings Page
+class SettingsPage extends StatelessWidget {
+  const SettingsPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final themeNotifier = Provider.of<ThemeNotifier>(context);
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Settings')),
+      body: Column(
+        children: [
+          RadioListTile<AppTheme>(
+            title: const Text('Light Theme'),
+            value: AppTheme.Light,
+            groupValue: themeNotifier.currentAppTheme,
+            onChanged: (value) {
+              if (value != null) {
+                themeNotifier.setTheme(value);
+             }
+            },
+          ),
+          RadioListTile<AppTheme>(
+            title: const Text('Dark Theme'),
+            value: AppTheme.Dark,
+            groupValue: themeNotifier.currentAppTheme,
+            onChanged: (value) {
+              if (value != null) {
+                themeNotifier.setTheme(value);
+              }
+            },
+          ),
+          RadioListTile<AppTheme>(
+            title: const Text('Custom Theme'),
+            value: AppTheme.Custom,
+            groupValue: themeNotifier.currentAppTheme,
+            onChanged: (value) {
+              if (value != null) {
+                themeNotifier.setTheme(value);
+              }
+            },
+          ),
+        ],
       ),
     );
   }

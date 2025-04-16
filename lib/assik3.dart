@@ -33,6 +33,11 @@ class _HabitChecklistPageState extends State<HabitChecklistPage> {
     'No Sugar',
     'Stretching',
     'Gratitude Journal',
+    'Learn a New Word',
+    'Digital Detox',
+    'Healthy Breakfast',
+    'Walk 10,000 Steps',
+    'Assignment'
   ];
 
   late List<bool> isChecked;
