@@ -152,9 +152,7 @@ class SettingsPage extends StatelessWidget {
             value: AppTheme.Light,
             groupValue: themeNotifier.currentAppTheme,
             onChanged: (value) {
-              if (value != null) {
-                themeNotifier.setTheme(value);
-             }
+              if (value != null) themeNotifier.setTheme(value);
             },
           ),
           RadioListTile<AppTheme>(
@@ -162,9 +160,7 @@ class SettingsPage extends StatelessWidget {
             value: AppTheme.Dark,
             groupValue: themeNotifier.currentAppTheme,
             onChanged: (value) {
-              if (value != null) {
-                themeNotifier.setTheme(value);
-              }
+              if (value != null) themeNotifier.setTheme(value);
             },
           ),
           RadioListTile<AppTheme>(
@@ -172,9 +168,7 @@ class SettingsPage extends StatelessWidget {
             value: AppTheme.Custom,
             groupValue: themeNotifier.currentAppTheme,
             onChanged: (value) {
-              if (value != null) {
-                themeNotifier.setTheme(value);
-              }
+              if (value != null) themeNotifier.setTheme(value);
             },
           ),
         ],
