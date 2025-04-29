@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'theme_notifier.dart';
 import 'pages/habit_home.dart';
+import 'pages/settings_page.dart';
+import 'pages/about_page.dart'; // <--- Add this import
 
 void main() {
   runApp(ChangeNotifierProvider(
@@ -20,7 +22,12 @@ class HabitudeApp extends StatelessWidget {
       title: 'Habitude',
       theme: themeNotifier.currentTheme,
       debugShowCheckedModeBanner: false,
-      home: const HabitHomePage(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const HabitHomePage(),
+        '/settings': (context) => const SettingsPage(),
+        '/about': (context) => const AboutPage(),
+      },
     );
   }
 }

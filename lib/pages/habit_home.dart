@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'settings_page.dart';
 
 class HabitHomePage extends StatefulWidget {
   const HabitHomePage({super.key});
@@ -12,6 +11,9 @@ class _HabitHomePageState extends State<HabitHomePage> {
   final List<String> habits = [];
   final List<bool> isChecked = [];
   final TextEditingController habitController = TextEditingController();
+  int _selectedIndex = 0;
+
+  final List<String> routeNames = ['/', '/about', '/settings'];
 
   void _addHabit() {
     final habit = habitController.text.trim();
@@ -24,23 +26,15 @@ class _HabitHomePageState extends State<HabitHomePage> {
     }
   }
 
+  void _onItemTapped(int index) {
+    if (index == 0) return; // Already on Home
+    Navigator.pushNamed(context, routeNames[index]);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Habitude'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SettingsPage()),
-              );
-            },
-          ),
-        ],
-      ),
+      appBar: AppBar(title: const Text('Habitude')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -78,6 +72,15 @@ class _HabitHomePageState extends State<HabitHomePage> {
             )
           ],
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.info), label: 'About'),
+          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
+        ],
       ),
     );
   }
